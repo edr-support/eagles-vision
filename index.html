@@ -41,7 +41,7 @@
         let isLoading = false; // Prevent multiple simultaneous requests
 
         async function fetchActivityLog() {
-            const url = `${baseUrl}/api/useractivities/activity?filter=${encodeURIComponent(JSON.stringify({
+            const url = `${baseUrl}/api/useractivities/activity
                 limit: limit,
                 skip: skip,
                 order: 'eventTime DESC',
