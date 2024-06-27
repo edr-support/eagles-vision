@@ -52,7 +52,8 @@
                     }
                 }
             };
-            const url = `${baseUrl}/api/useractivities/activity?filter=${encodeURIComponent(JSON.stringify(filter))}`;
+            const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+            const url = `${corsProxy}${baseUrl}/api/useractivities/activity?filter=${encodeURIComponent(JSON.stringify(filter))}`;
             const response = await fetch(url, {
                 method: 'GET',
                 headers: {
