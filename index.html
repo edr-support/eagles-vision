@@ -41,7 +41,7 @@
         let isLoading = false; // Prevent multiple simultaneous requests
 
         async function fetchActivityLog() {
-            const url = `${baseUrl}/api/useractivities/activity
+            const filter = {
                 limit: limit,
                 skip: skip,
                 order: 'eventTime DESC',
@@ -51,7 +51,8 @@
                         fields: ['id', 'username', 'email']
                     }
                 }
-            }))}`;
+            };
+            const url = `${baseUrl}/api/useractivities/activity?filter=${encodeURIComponent(JSON.stringify(filter))}`;
             const response = await fetch(url, {
                 method: 'GET',
                 headers: {
