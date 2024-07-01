@@ -1,33 +1,50 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>JSON Beautifier</title>
+    <title>JSON Beautifier and Table Viewer</title>
     <style>
         textarea {
             width: 80%;
             height: 200px;
         }
-        pre {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            background-color: #f4f4f4;
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-top: 10px;
+        table {
+            width: 100%;
+            margin-top: 20px;
         }
     </style>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
 </head>
 <body>
-    <h1>JSON Beautifier</h1>
+    <h1>JSON Beautifier and Table Viewer</h1>
     <textarea id="inputJson" placeholder="Paste your JSON log entries here"></textarea><br>
     <button onclick="beautifyJson()">Beautify JSON</button>
     <div id="output"></div>
+    <table id="jsonTable" class="display">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Action</th>
+                <th>Created On</th>
+                <th>ID</th>
+                <th>User ID</th>
+                <th>Related ID</th>
+                <th>Body</th>
+                <th>Query</th>
+                <th>Params</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
 
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
     <script>
         function beautifyJson() {
             const input = document.getElementById('inputJson').value;
             const outputDiv = document.getElementById('output');
+            const tableBody = document.getElementById('jsonTable').querySelector('tbody');
             outputDiv.innerHTML = ''; // Clear previous output
+            tableBody.innerHTML = ''; // Clear previous table data
 
             try {
                 // Regular expression to match individual JSON objects
@@ -40,6 +57,18 @@
                             const pre = document.createElement('pre');
                             pre.textContent = prettyJson;
                             outputDiv.appendChild(pre);
+
+                            // Add data to the table
+                            const row = tableBody.insertRow();
+                            row.insertCell().textContent = jsonObject.item;
+                            row.insertCell().textContent = jsonObject.action;
+                            row.insertCell().textContent = new Date(jsonObject.createdOn).toLocaleString();
+                            row.insertCell().textContent = jsonObject.id;
+                            row.insertCell().textContent = jsonObject.userId;
+                            row.insertCell().textContent = jsonObject.relatedId;
+                            row.insertCell().textContent = JSON.stringify(jsonObject.body);
+                            row.insertCell().textContent = JSON.stringify(jsonObject.query);
+                            row.insertCell().textContent = JSON.stringify(jsonObject.params);
                         } catch (e) {
                             const error = document.createElement('div');
                             error.textContent = `Invalid JSON: ${entry}`;
@@ -47,6 +76,9 @@
                             outputDiv.appendChild(error);
                         }
                     });
+
+                    // Initialize DataTable
+                    $('#jsonTable').DataTable();
                 } else {
                     outputDiv.textContent = 'No valid JSON entries found.';
                     outputDiv.style.color = 'red';
