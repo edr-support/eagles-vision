@@ -1,48 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JSON Beautifier</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            flex-direction: column;
-        }
         textarea {
-            width: 90%;
+            width: 80%;
             height: 200px;
-            margin-bottom: 20px;
-            padding: 10px;
-            font-size: 14px;
-            font-family: monospace;
         }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background-color: #f4f4f4;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <h1>JSON Beautifier</h1>
-    <textarea id="inputJson" placeholder="Paste your JSON here..."></textarea>
+    <textarea id="inputJson" placeholder="Paste your JSON log entries here"></textarea><br>
     <button onclick="beautifyJson()">Beautify JSON</button>
-    <textarea id="outputJson" placeholder="Beautified JSON will appear here..." readonly></textarea>
+    <div id="output"></div>
 
     <script>
         function beautifyJson() {
             const input = document.getElementById('inputJson').value;
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = ''; // Clear previous output
+
             try {
-                const json = JSON.parse(input);
-                const beautifiedJson = JSON.stringify(json, null, 4);
-                document.getElementById('outputJson').value = beautifiedJson;
-            } catch (error) {
-                alert('Invalid JSON');
-                document.getElementById('outputJson').value = '';
+                // Split the input into multiple JSON entries
+                const entries = input.split(/\r?\n/).filter(entry => entry.trim() !== '');
+                entries.forEach(entry => {
+                    try {
+                        const jsonObject = JSON.parse(entry);
+                        const prettyJson = JSON.stringify(jsonObject, null, 2);
+                        const pre = document.createElement('pre');
+                        pre.textContent = prettyJson;
+                        outputDiv.appendChild(pre);
+                    } catch (e) {
+                        const error = document.createElement('div');
+                        error.textContent = `Invalid JSON: ${entry}`;
+                        error.style.color = 'red';
+                        outputDiv.appendChild(error);
+                    }
+                });
+            } catch (e) {
+                outputDiv.textContent = 'An error occurred while processing the JSON entries.';
+                outputDiv.style.color = 'red';
             }
         }
     </script>
