@@ -30,22 +30,27 @@
             outputDiv.innerHTML = ''; // Clear previous output
 
             try {
-                // Split the input into multiple JSON entries
-                const entries = input.split(/\r?\n/).filter(entry => entry.trim() !== '');
-                entries.forEach(entry => {
-                    try {
-                        const jsonObject = JSON.parse(entry);
-                        const prettyJson = JSON.stringify(jsonObject, null, 2);
-                        const pre = document.createElement('pre');
-                        pre.textContent = prettyJson;
-                        outputDiv.appendChild(pre);
-                    } catch (e) {
-                        const error = document.createElement('div');
-                        error.textContent = `Invalid JSON: ${entry}`;
-                        error.style.color = 'red';
-                        outputDiv.appendChild(error);
-                    }
-                });
+                // Regular expression to match individual JSON objects
+                const jsonEntries = input.match(/\{(?:[^{}]|(?:\{[^{}]*\}))*\}/g);
+                if (jsonEntries) {
+                    jsonEntries.forEach(entry => {
+                        try {
+                            const jsonObject = JSON.parse(entry);
+                            const prettyJson = JSON.stringify(jsonObject, null, 2);
+                            const pre = document.createElement('pre');
+                            pre.textContent = prettyJson;
+                            outputDiv.appendChild(pre);
+                        } catch (e) {
+                            const error = document.createElement('div');
+                            error.textContent = `Invalid JSON: ${entry}`;
+                            error.style.color = 'red';
+                            outputDiv.appendChild(error);
+                        }
+                    });
+                } else {
+                    outputDiv.textContent = 'No valid JSON entries found.';
+                    outputDiv.style.color = 'red';
+                }
             } catch (e) {
                 outputDiv.textContent = 'An error occurred while processing the JSON entries.';
                 outputDiv.style.color = 'red';
