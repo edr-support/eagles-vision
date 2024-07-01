@@ -3,111 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Activity Log</title>
+    <title>JSON Beautifier</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
         }
-        #activity-log {
-            margin-top: 20px;
-        }
-        .log-item {
-            border: 1px solid #ccc;
+        textarea {
+            width: 90%;
+            height: 200px;
+            margin-bottom: 20px;
             padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            white-space: pre-wrap; /* Preserve formatting */
+            font-size: 14px;
+            font-family: monospace;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
-    <h1>Activity Log</h1>
-    <label for="base-url">Enter your base URL (e.g., https://rmmzine1c40001.infocyte.com):</label>
-    <input type="text" id="base-url" placeholder="Base URL">
-    <br><br>
-    <label for="api-token">Enter your API token:</label>
-    <input type="text" id="api-token" placeholder="API Token">
-    <br><br>
-    <button onclick="fetchAndDisplayInitialLog()">Fetch Activity Log</button>
-
-    <div id="activity-log"></div>
+    <h1>JSON Beautifier</h1>
+    <textarea id="inputJson" placeholder="Paste your JSON here..."></textarea>
+    <button onclick="beautifyJson()">Beautify JSON</button>
+    <textarea id="outputJson" placeholder="Beautified JSON will appear here..." readonly></textarea>
 
     <script>
-        let skip = 0; // Pagination skip value
-        const limit = 10; // Number of items per request
-        let baseUrl = '';
-        let apiToken = '';
-        let isLoading = false; // Prevent multiple simultaneous requests
-
-        async function fetchActivityLog() {
-            const filter = {
-                limit: limit,
-                skip: skip,
-                order: 'eventTime DESC',
-                include: {
-                    relation: 'userIdentity',
-                    scope: {
-                        fields: ['id', 'username', 'email']
-                    }
-                }
-            };
-            const corsProxy = 'https://cors-anywhere.herokuapp.com/';
-            const url = `${corsProxy}${baseUrl}/api/useractivities/activity?filter=${encodeURIComponent(JSON.stringify(filter))}`;
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${apiToken}`
-                }
-            });
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            const data = await response.json();
-            return data;
-        }
-
-        async function fetchAndDisplayActivityLog() {
-            if (isLoading) return;
-            isLoading = true;
+        function beautifyJson() {
+            const input = document.getElementById('inputJson').value;
             try {
-                const log = await fetchActivityLog();
-                const logContainer = document.getElementById('activity-log');
-                log.forEach(item => {
-                    const logItem = document.createElement('div');
-                    logItem.className = 'log-item';
-                    logItem.textContent = JSON.stringify(item, null, 2);
-                    logContainer.appendChild(logItem);
-                });
-                skip += limit; // Update the skip value for the next batch
+                const json = JSON.parse(input);
+                const beautifiedJson = JSON.stringify(json, null, 4);
+                document.getElementById('outputJson').value = beautifiedJson;
             } catch (error) {
-                alert('Failed to fetch activity log: ' + error.message);
-            } finally {
-                isLoading = false;
+                alert('Invalid JSON');
+                document.getElementById('outputJson').value = '';
             }
         }
-
-        function fetchAndDisplayInitialLog() {
-            baseUrl = document.getElementById('base-url').value;
-            apiToken = document.getElementById('api-token').value;
-            if (!baseUrl) {
-                alert('Please enter your base URL');
-                return;
-            }
-            if (!apiToken) {
-                alert('Please enter your API token');
-                return;
-            }
-            skip = 0; // Reset pagination
-            document.getElementById('activity-log').innerHTML = ''; // Clear previous content
-            fetchAndDisplayActivityLog();
-        }
-
-        window.addEventListener('scroll', () => {
-            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && !isLoading) {
-                fetchAndDisplayActivityLog();
-            }
-        });
     </script>
 </body>
 </html>
