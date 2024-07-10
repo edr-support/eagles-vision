@@ -1,0 +1,66 @@
+body {
+    background-color: #333;
+    color: #fff;
+    font-family: Arial, sans-serif;
+}
+
+.table-container {
+    margin: 20px;
+}
+
+.dataTables_wrapper {
+    color: #fff;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    color: #000;
+}
+
+.dataTables_wrapper .dataTables_length select {
+    color: #000;
+}
+
+table.dataTable thead th {
+    background-color: #555;
+    color: #fff;
+}
+
+table.dataTable tbody td {
+    background-color: #444;
+    color: #fff;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    background-color: #444;
+    color: #fff;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.dataTables_wrapper .dataTables_info {
+    color: #fff;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background-color: #0069d9;
+    color: #fff;
+}
+
+.dataTables_wrapper .dataTables_length select {
+    background-color: #444;
+    color: #fff;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    background-color: #444;
+    color: #fff;
+    border: 1px solid #555;
+}
+
+.dataTables_wrapper .dataTables_filter input:focus {
+    background-color: #555;
+    color: #fff;
+}
