@@ -1,7 +1,6 @@
 $(document).ready(function() {
-    // Assuming your JSON data is in a string format
-    const jsonData = `
-    [
+    // Corrected JSON data string
+    const jsonData = `[
         {
             "id": 1,
             "user": "John Doe",
@@ -15,38 +14,42 @@ $(document).ready(function() {
             "timestamp": "2024-07-10 12:35:10"
         }
         // Add more entries as needed
-    ]
-    `;
+    ]`;
 
-    // Parse the JSON string into a JavaScript object
-    const activityLogData = JSON.parse(jsonData);
+    try {
+        // Parse the JSON string into a JavaScript object
+        const activityLogData = JSON.parse(jsonData);
 
-    $('#activityLogTable').DataTable({
-        data: activityLogData,
-        columns: [
-            { data: 'id' },
-            { data: 'user' },
-            { data: 'action' },
-            { data: 'timestamp' }
-        ],
-        initComplete: function () {
-            this.api().columns().every(function () {
-                var column = this;
-                var select = $('<select><option value=""></option></select>')
-                    .appendTo($(column.footer()).empty())
-                    .on('change', function () {
-                        var val = $.fn.dataTable.util.escapeRegex(
-                            $(this).val()
-                        );
-                        column
-                            .search(val ? '^' + val + '$' : '', true, false)
-                            .draw();
+        $('#activityLogTable').DataTable({
+            data: activityLogData,
+            columns: [
+                { data: 'id' },
+                { data: 'user' },
+                { data: 'action' },
+                { data: 'timestamp' }
+            ],
+            initComplete: function () {
+                this.api().columns().every(function () {
+                    var column = this;
+                    var select = $('<select><option value=""></option></select>')
+                        .appendTo($(column.footer()).empty())
+                        .on('change', function () {
+                            var val = $.fn.dataTable.util.escapeRegex(
+                                $(this).val()
+                            );
+                            column
+                                .search(val ? '^' + val + '$' : '', true, false)
+                                .draw();
+                        });
+
+                    column.data().unique().sort().each(function (d, j) {
+                        select.append('<option value="' + d + '">' + d + '</option>')
                     });
-
-                column.data().unique().sort().each(function (d, j) {
-                    select.append('<option value="' + d + '">' + d + '</option>')
                 });
-            });
-        }
-    });
+            }
+        });
+    } catch (error) {
+        console.error('Error parsing JSON:', error);
+        // Handle error appropriately, e.g., show an alert or log it
+    }
 });
