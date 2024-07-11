@@ -1,55 +1,53 @@
-$(document).ready(function() {
-    // Corrected JSON data string
-    const jsonData = `[
-        {
-            "id": 1,
-            "user": "John Doe",
-            "action": "Logged in",
-            "timestamp": "2024-07-10 12:34:56"
-        },
-        {
-            "id": 2,
-            "user": "Jane Smith",
-            "action": "Viewed profile",
-            "timestamp": "2024-07-10 12:35:10"
-        }
-        // Add more entries as needed
-    ]`;
+function processJson() {
+    const input = document.getElementById('inputJson').value;
+    const jsonEntries = input.match(/\{(?:[^{}]|(?:\{[^{}]*\}))*\}/g);
+    const table = $('#logTable').DataTable();
+    table.clear();
 
-    try {
-        // Parse the JSON string into a JavaScript object
-        const activityLogData = JSON.parse(jsonData);
-
-        $('#activityLogTable').DataTable({
-            data: activityLogData,
-            columns: [
-                { data: 'id' },
-                { data: 'user' },
-                { data: 'action' },
-                { data: 'timestamp' }
-            ],
-            initComplete: function () {
-                this.api().columns().every(function () {
-                    var column = this;
-                    var select = $('<select><option value=""></option></select>')
-                        .appendTo($(column.footer()).empty())
-                        .on('change', function () {
-                            var val = $.fn.dataTable.util.escapeRegex(
-                                $(this).val()
-                            );
-                            column
-                                .search(val ? '^' + val + '$' : '', true, false)
-                                .draw();
-                        });
-
-                    column.data().unique().sort().each(function (d, j) {
-                        select.append('<option value="' + d + '">' + d + '</option>')
-                    });
-                });
+    if (jsonEntries) {
+        jsonEntries.forEach(entry => {
+            try {
+                const jsonObject = JSON.parse(entry);
+                table.row.add([
+                    jsonObject.id || '',
+                    jsonObject.userId || '',
+                    jsonObject.item || '',
+                    jsonObject.action || '',
+                    jsonObject.relatedId || '',
+                    jsonObject.createdOn || '',
+                    JSON.stringify(jsonObject.body, null, 2) || '',
+                    JSON.stringify(jsonObject.query, null, 2) || '',
+                    JSON.stringify(jsonObject.params, null, 2) || '',
+                    JSON.stringify(jsonObject.userIdentity, null, 2) || ''
+                ]);
+            } catch (e) {
+                console.error('Invalid JSON entry:', entry);
             }
         });
-    } catch (error) {
-        console.error('Error parsing JSON:', error);
-        // Handle error appropriately, e.g., show an alert or log it
+        table.draw();
+        document.getElementById('logTable').style.display = 'table';
+    } else {
+        alert('No valid JSON entries found.');
     }
+}
+
+$(document).ready(function() {
+    $('#logTable').DataTable({
+        columns: [
+            { title: "ID" },
+            { title: "User ID" },
+            { title: "Item" },
+            { title: "Action" },
+            { title: "Related ID" },
+            { title: "Created On" },
+            { title: "Body" },
+            { title: "Query" },
+            { title: "Params" },
+            { title: "User Identity" }
+        ],
+        searching: true,
+        paging: true,
+        info: true,
+        autoWidth: true
+    });
 });
