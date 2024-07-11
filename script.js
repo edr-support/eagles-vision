@@ -1,5 +1,5 @@
 function processJson() {
-    const input = document.getElementById('inputJson').value;
+    const input = document.getElementById('inputJson').value.trim();
     const jsonEntries = input.match(/\{(?:[^{}]|(?:\{[^{}]*\}))*\}/g);
     const table = $('#logTable').DataTable();
     table.clear();
