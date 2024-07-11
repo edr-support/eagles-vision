@@ -1,5 +1,5 @@
 function processJson() {
-    const input = document.getElementById('inputJson').value.trim();
+    const input = document.getElementById('inputJson').value;
     const jsonEntries = input.match(/\{(?:[^{}]|(?:\{[^{}]*\}))*\}/g);
     const table = $('#logTable').DataTable();
     table.clear();
@@ -21,7 +21,7 @@ function processJson() {
                     JSON.stringify(jsonObject.userIdentity, null, 2) || ''
                 ]);
             } catch (e) {
-                console.error('Invalid JSON entry:', entry);
+                console.error('Invalid JSON entry:', entry, e);
             }
         });
         table.draw();
